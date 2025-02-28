@@ -1,0 +1,26 @@
+name: Daily Auto Commit
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  # Runs at 9:00 AM UTC daily
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Make 10 changes
+        run: |
+          for i in {1..10}; do
+            echo "Update $i - $(date)" > "update_$i.txt"
+          done
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "vamsiram7"
+          git config --global user.email "vpatiban@gmu.edu"
+          git add .
+          git commit -m "Automated commit on $(date)" || echo "No changes to commit"
+          git push
