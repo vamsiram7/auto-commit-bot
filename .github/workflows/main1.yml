@@ -3,7 +3,7 @@ name: Daily Auto Commit
 on:
   schedule:
     - cron: "0 9 * * *"  # Runs at 9:00 AM UTC daily
-  workflow_dispatch:  # 👈 Allows manual trigger
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   commit:
@@ -15,13 +15,14 @@ jobs:
       - name: Make 10 changes
         run: |
           for i in {1..10}; do
-            echo "Update $i - $(date)" > "update_$i.txt"
+            echo "Update $i - $(date)" >> "daily_update.txt"
+            git add daily_update.txt
+            git commit -m "Automated commit #$i on $(date)"
+            sleep 2  # Small delay to make each commit unique
           done
 
-      - name: Commit and Push changes
+      - name: Push changes
         run: |
           git config --global user.name "vamsiram7"
           git config --global user.email "vpatiban@gmu.edu"
-          git add .
-          git commit -m "Automated commit on $(date)" || echo "No changes to commit"
           git push
