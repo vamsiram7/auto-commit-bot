@@ -11,11 +11,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures the full repo history is available
 
       - name: Set up Git user
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+
+      - name: Pull latest changes
+        run: |
+          git pull origin main --rebase  # Pulls latest updates before committing
 
       - name: Make 10 unique commits
         run: |
@@ -25,6 +31,10 @@ jobs:
             git commit -m "Automated commit #$i on $(date)" || echo "No changes to commit"
             sleep 2  # Ensures commits are separate
           done
+
+      - name: Merge latest changes
+        run: |
+          git pull origin main --rebase  # Merge latest changes before pushing
 
       - name: Push changes
         run: |
