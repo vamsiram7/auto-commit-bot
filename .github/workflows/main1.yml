@@ -2,7 +2,7 @@ name: Daily Auto Commit
 
 on:
   schedule:
-    - cron: "0 9 * * *"  # Runs at 9:00 AM UTC daily
+    - cron: "10 13 * * *"  # Runs at 1:10 PM UTC (8:10 AM EST)
   workflow_dispatch:  # Allows manual trigger
 
 jobs:
@@ -20,10 +20,12 @@ jobs:
       - name: Make 10 unique commits
         run: |
           for i in {1..10}; do
-            # Create a unique file with distinct content for each commit
-            echo "This is update #$i with unique content for commit $i" > "update_$i.txt"
-            git add "update_$i.txt"
-            git commit -m "Automated commit #$i on $(date)"
-            git push origin main  # Push to the main branch
-            sleep 3  # Small delay to make each commit unique
+            echo "Commit $i - $(date)" >> commit_log.txt  # Modify a file uniquely
+            git add commit_log.txt
+            git commit -m "Automated commit #$i on $(date)" || echo "No changes to commit"
+            sleep 2  # Ensures commits are separate
           done
+
+      - name: Push changes
+        run: |
+          git push origin main
